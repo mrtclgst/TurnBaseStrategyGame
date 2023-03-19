@@ -9,13 +9,12 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
-    #region Public Variables
-
-    #endregion
-
     #region Private Variables
 
-    private Vector3 targetPosition;
+    [SerializeField] private Animator _unitAnimator;
+    [SerializeField] float _rotateSpeed = 10f;
+    [SerializeField] float _moveSpeed = 4f;
+    private Vector3 _targetPosition;
 
     #endregion
 
@@ -24,21 +23,24 @@ public class Unit : MonoBehaviour
     #endregion
 
     #region Unity Methods
+    private void Awake()
+    {
+        _targetPosition = transform.position;
+    }
 
     private void Update()
     {
         float stoppingDistance = 0.1f;
-        if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
+        if (Vector3.Distance(transform.position, _targetPosition) > stoppingDistance)
         {
-
-            Vector3 moveDirection = (targetPosition - transform.position).normalized;
-            float moveSpeed = 4f;
-            transform.position += moveDirection * moveSpeed * Time.deltaTime;
+            Vector3 moveDirection = (_targetPosition - transform.position).normalized;
+            transform.position += moveDirection * _moveSpeed * Time.deltaTime;
+            transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * _rotateSpeed);
+            _unitAnimator.SetBool("IsWalking", true);
         }
-
-        if (Input.GetMouseButtonDown(0))
+        else
         {
-            Move(MouseWorld.GetPosition());
+            _unitAnimator.SetBool("IsWalking", false);
         }
     }
 
@@ -50,9 +52,9 @@ public class Unit : MonoBehaviour
 
     #region Functions
 
-    private void Move(Vector3 targetPosition)
+    public void Move(Vector3 targetPosition)
     {
-        this.targetPosition = targetPosition;
+        this._targetPosition = targetPosition;
     }
 
     #endregion
