@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,7 +11,8 @@ using UnityEngine;
 public class UnitActionSystem : MonoBehaviour
 {
     #region Public Variables
-
+    public event EventHandler OnSelectedUnitChanged;
+    public static UnitActionSystem Instance { get; private set; }
     #endregion
 
     #region Private Variables
@@ -26,11 +28,17 @@ public class UnitActionSystem : MonoBehaviour
     #endregion
 
     #region Unity Methods
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Debug.LogError("There is more than one UnitActionSystem!" + transform + " - " + Instance);
+            Destroy(gameObject);
+            return;
+        }
 
-
-    #endregion
-
-    #region Events
+        Instance = this;
+    }
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -45,6 +53,10 @@ public class UnitActionSystem : MonoBehaviour
     }
     #endregion
 
+    #region Events
+
+    #endregion
+
     #region Functions
 
     private bool TryHandleUnitSelection()
@@ -56,13 +68,24 @@ public class UnitActionSystem : MonoBehaviour
             {
                 if (hit.transform.TryGetComponent<Unit>(out Unit unit))
                 {
-                    _selectedUnit = unit;
+                    SetSelectedUnit(unit);
                     return true;
                 }
             }
         }
 
         return false;
+    }
+
+    private void SetSelectedUnit(Unit unit)
+    {
+        _selectedUnit = unit;
+        OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public Unit GetSelectedUnit()
+    {
+        return _selectedUnit;
     }
 
     #endregion
