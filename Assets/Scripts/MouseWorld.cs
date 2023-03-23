@@ -1,12 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-
-///INFO
-///->Usage of MouseWorld script: 
-///ENDINFO
 
 public class MouseWorld : MonoBehaviour
 {
