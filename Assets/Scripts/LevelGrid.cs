@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGrid : MonoBehaviour
@@ -21,32 +22,31 @@ public class LevelGrid : MonoBehaviour
         _gridSystem.CreateDebugObjects(_gridDebugObject);
     }
 
-    public void SetUnitAtPosition(GridPosition gridPosition, Unit unit)
+    public void AddUnitAtPosition(GridPosition gridPosition, Unit unit)
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-        gridObject.SetUnit(unit);
+        gridObject.AddUnit(unit);
     }
 
-    public Unit GetUnitAtPosition(GridPosition gridPosition)
+    public List<Unit> GetUnitListAtPosition(GridPosition gridPosition)
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-        return gridObject.GetUnit();
+        return gridObject.GetUnitList();
     }
 
-    public void ClearUnitAtPosition(GridPosition gridPosition)
+    public void RemoveUnitAtPosition(GridPosition gridPosition, Unit unit)
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
-        gridObject.SetUnit(null);
-    }
-
-    public GridPosition GetGridPosition(Vector3 worldPosition)
-    {
-        return _gridSystem.GetGridPosition(worldPosition);
+        gridObject.RemoveUnit(unit);
     }
 
     public void UnitMovedGridPosition(Unit unit, GridPosition fromGridPosition, GridPosition toGridPosition)
     {
-        ClearUnitAtPosition(fromGridPosition);
-        SetUnitAtPosition(toGridPosition, unit);
+        RemoveUnitAtPosition(fromGridPosition, unit);
+        AddUnitAtPosition(toGridPosition, unit);
+    }
+    public GridPosition GetGridPosition(Vector3 worldPosition)
+    {
+        return _gridSystem.GetGridPosition(worldPosition);
     }
 }
