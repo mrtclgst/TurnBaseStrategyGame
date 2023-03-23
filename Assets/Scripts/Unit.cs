@@ -1,11 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-
-///INFO
-///->Usage of Unit script: 
-///ENDINFO
 
 public class Unit : MonoBehaviour
 {
@@ -15,6 +8,7 @@ public class Unit : MonoBehaviour
     [SerializeField] float _rotateSpeed = 10f;
     [SerializeField] float _moveSpeed = 4f;
     private Vector3 _targetPosition;
+    private GridPosition _gridPosition;
 
     #endregion
 
@@ -23,9 +17,16 @@ public class Unit : MonoBehaviour
     #endregion
 
     #region Unity Methods
+
     private void Awake()
     {
         _targetPosition = transform.position;
+    }
+
+    private void Start()
+    {
+        _gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.SetUnitAtPosition(_gridPosition, this);
     }
 
     private void Update()
@@ -34,13 +35,20 @@ public class Unit : MonoBehaviour
         if (Vector3.Distance(transform.position, _targetPosition) > stoppingDistance)
         {
             Vector3 moveDirection = (_targetPosition - transform.position).normalized;
-            transform.position += moveDirection * _moveSpeed * Time.deltaTime;
+            transform.position += _moveSpeed * Time.deltaTime * moveDirection;
             transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * _rotateSpeed);
             _unitAnimator.SetBool("IsWalking", true);
         }
         else
         {
             _unitAnimator.SetBool("IsWalking", false);
+        }
+
+        GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        if (newGridPosition != _gridPosition)
+        {
+            LevelGrid.Instance.UnitMovedGridPosition(this, _gridPosition, newGridPosition);
+            _gridPosition = newGridPosition;
         }
     }
 
