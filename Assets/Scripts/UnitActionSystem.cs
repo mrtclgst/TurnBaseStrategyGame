@@ -1,12 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-
-///INFO
-///->Usage of UnitActionSystem script: 
-///ENDINFO
 public class UnitActionSystem : MonoBehaviour
 {
     #region Public Variables
@@ -20,6 +14,7 @@ public class UnitActionSystem : MonoBehaviour
 
     [SerializeField] private Unit _selectedUnit;
     [SerializeField] private LayerMask _unitLayerMask;
+    private bool _isBusy = false;
 
     #endregion
 
@@ -43,6 +38,11 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Update()
     {
+        if (_isBusy)
+        {
+            return;
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             if (TryHandleUnitSelection())
@@ -53,8 +53,15 @@ public class UnitActionSystem : MonoBehaviour
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
             if (_selectedUnit.GetMoveAction().IsValidActionGridPosition(mouseGridPosition))
             {
-                _selectedUnit.GetMoveAction().Move(mouseGridPosition);
+                SetBusy();
+                _selectedUnit.GetMoveAction().Move(mouseGridPosition, ClearBusy);
             }
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            SetBusy();
+            _selectedUnit.GetSpinAction().Spin(ClearBusy);
         }
     }
 
@@ -82,6 +89,16 @@ public class UnitActionSystem : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void SetBusy()
+    {
+        _isBusy = true;
+    }
+
+    private void ClearBusy()
+    {
+        _isBusy = false;
     }
 
     private void SetSelectedUnit(Unit unit)
