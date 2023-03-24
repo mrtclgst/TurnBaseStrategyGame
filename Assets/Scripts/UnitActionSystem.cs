@@ -7,12 +7,13 @@ using UnityEngine;
 ///INFO
 ///->Usage of UnitActionSystem script: 
 ///ENDINFO
-
 public class UnitActionSystem : MonoBehaviour
 {
     #region Public Variables
+
     public event EventHandler OnSelectedUnitChanged;
     public static UnitActionSystem Instance { get; private set; }
+
     #endregion
 
     #region Private Variables
@@ -24,10 +25,10 @@ public class UnitActionSystem : MonoBehaviour
 
     #region Cached
 
-
     #endregion
 
     #region Unity Methods
+
     private void Awake()
     {
         if (Instance != null)
@@ -39,6 +40,7 @@ public class UnitActionSystem : MonoBehaviour
 
         Instance = this;
     }
+
     private void Update()
     {
         if (Input.GetMouseButtonDown(0))
@@ -48,9 +50,14 @@ public class UnitActionSystem : MonoBehaviour
                 return;
             }
 
-            _selectedUnit.Move(MouseWorld.GetPosition());
+            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+            if (_selectedUnit.GetMoveAction().IsValidActionGridPosition(mouseGridPosition))
+            {
+                _selectedUnit.GetMoveAction().Move(mouseGridPosition);
+            }
         }
     }
+
     #endregion
 
     #region Events

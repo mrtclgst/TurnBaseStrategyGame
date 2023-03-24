@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,8 +44,22 @@ public class LevelGrid : MonoBehaviour
         RemoveUnitAtPosition(fromGridPosition, unit);
         AddUnitAtPosition(toGridPosition, unit);
     }
+
     public GridPosition GetGridPosition(Vector3 worldPosition)
     {
         return _gridSystem.GetGridPosition(worldPosition);
+    }
+
+    public Vector3 GetWorldPosition(GridPosition gridPosition)
+    {
+        return _gridSystem.GetWorldPosition(gridPosition);
+    }
+
+    public bool IsValidGridPosition(GridPosition gridPosition) => _gridSystem.IsValidGridPosition(gridPosition);
+
+    public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        return gridObject.HasAnyUnit();
     }
 }

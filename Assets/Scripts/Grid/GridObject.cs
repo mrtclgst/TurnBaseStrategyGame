@@ -20,6 +20,7 @@ public class GridObject
         {
             unitString += unit + "\n";
         }
+
         return _gridPosition.ToString() + "\n" + unitString;
     }
 
@@ -27,6 +28,7 @@ public class GridObject
     {
         _unitList.Add(unit);
     }
+
     public void RemoveUnit(Unit unit)
     {
         _unitList.Remove(unit);
@@ -35,5 +37,10 @@ public class GridObject
     public List<Unit> GetUnitList()
     {
         return _unitList;
+    }
+
+    public bool HasAnyUnit()
+    {
+        return _unitList.Count > 0;
     }
 }
