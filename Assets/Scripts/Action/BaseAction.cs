@@ -11,4 +11,7 @@ public abstract class BaseAction : MonoBehaviour
     {
         _unit = GetComponent<Unit>();
     }
+
+    //herkesi bunu implemente etmek icin zorluyoruz abstract ile 
+    public abstract string GetActionName();
 }

@@ -40,7 +40,7 @@ public class MoveAction : BaseAction
         {
             _unitAnimator.SetBool("IsWalking", false);
             _isActive = false;
-            _onActionComplete();  
+            _onActionComplete();
         }
     }
 
@@ -91,5 +91,10 @@ public class MoveAction : BaseAction
         _onActionComplete = onMoveComplete;
         this._targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
         _isActive = true;
+    }
+
+    public override string GetActionName()
+    {
+        return "Move";
     }
 }

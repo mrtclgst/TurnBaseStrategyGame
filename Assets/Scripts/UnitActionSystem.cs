@@ -15,6 +15,7 @@ public class UnitActionSystem : MonoBehaviour
     [SerializeField] private Unit _selectedUnit;
     [SerializeField] private LayerMask _unitLayerMask;
     private bool _isBusy = false;
+    private BaseAction _selectedAction;
 
     #endregion
 
@@ -36,6 +37,11 @@ public class UnitActionSystem : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        SetSelectedUnit(_selectedUnit);
+    }
+
     private void Update()
     {
         if (_isBusy)
@@ -43,26 +49,12 @@ public class UnitActionSystem : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (TryHandleUnitSelection())
         {
-            if (TryHandleUnitSelection())
-            {
-                return;
-            }
-
-            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
-            if (_selectedUnit.GetMoveAction().IsValidActionGridPosition(mouseGridPosition))
-            {
-                SetBusy();
-                _selectedUnit.GetMoveAction().Move(mouseGridPosition, ClearBusy);
-            }
+            return;
         }
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            SetBusy();
-            _selectedUnit.GetSpinAction().Spin(ClearBusy);
-        }
+        HandleSelectedAction();
     }
 
     #endregion
@@ -72,6 +64,29 @@ public class UnitActionSystem : MonoBehaviour
     #endregion
 
     #region Functions
+
+    private void HandleSelectedAction()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+
+            switch (_selectedAction)
+            {
+                case MoveAction moveAction:
+                    if (_selectedUnit.GetMoveAction().IsValidActionGridPosition(mouseGridPosition))
+                    {
+                        SetBusy();
+                        moveAction.Move(mouseGridPosition, ClearBusy);
+                    }
+                    break;
+                case SpinAction spinAction:
+                    SetBusy();
+                    spinAction.Spin(ClearBusy);
+                    break;
+            }
+        }
+    }
 
     private bool TryHandleUnitSelection()
     {
@@ -104,13 +119,21 @@ public class UnitActionSystem : MonoBehaviour
     private void SetSelectedUnit(Unit unit)
     {
         _selectedUnit = unit;
+        SetSelectedAction(unit.GetMoveAction());
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SetSelectedAction(BaseAction action)
+    {
+        _selectedAction = action;
     }
 
     public Unit GetSelectedUnit()
     {
         return _selectedUnit;
     }
+
+
 
     #endregion
 }

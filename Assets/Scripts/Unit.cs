@@ -8,10 +8,7 @@ public class Unit : MonoBehaviour
     private GridPosition _gridPosition;
     private MoveAction _moveAction;
     private SpinAction _spinAction;
-
-    #endregion
-
-    #region Cached
+    private BaseAction[] _baseActionArray;
 
     #endregion
 
@@ -21,6 +18,7 @@ public class Unit : MonoBehaviour
     {
         _moveAction = GetComponent<MoveAction>();
         _spinAction = GetComponent<SpinAction>();
+        _baseActionArray = GetComponents<BaseAction>();
     }
 
     private void Start()
@@ -60,6 +58,11 @@ public class Unit : MonoBehaviour
     public GridPosition GetGridPosition()
     {
         return _gridPosition;
+    }
+
+    public BaseAction[] GetBaseActionArray()
+    {
+        return _baseActionArray;
     }
 
     #endregion
