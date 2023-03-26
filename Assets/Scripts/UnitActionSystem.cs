@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class UnitActionSystem : MonoBehaviour
 {
     #region Public Variables
 
     public event EventHandler OnSelectedUnitChanged;
+    public event EventHandler OnSelectedActionChanged;
+
     public static UnitActionSystem Instance { get; private set; }
 
     #endregion
@@ -49,6 +52,11 @@ public class UnitActionSystem : MonoBehaviour
             return;
         }
 
+        if (EventSystem.current.IsPointerOverGameObject())
+        {
+            return;
+        }
+
         if (TryHandleUnitSelection())
         {
             return;
@@ -71,20 +79,28 @@ public class UnitActionSystem : MonoBehaviour
         {
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
 
-            switch (_selectedAction)
+            //Refactored version
+            if (_selectedAction.IsValidActionGridPosition(mouseGridPosition))
             {
-                case MoveAction moveAction:
-                    if (_selectedUnit.GetMoveAction().IsValidActionGridPosition(mouseGridPosition))
-                    {
-                        SetBusy();
-                        moveAction.Move(mouseGridPosition, ClearBusy);
-                    }
-                    break;
-                case SpinAction spinAction:
-                    SetBusy();
-                    spinAction.Spin(ClearBusy);
-                    break;
+                SetBusy();
+                _selectedAction.TakeAction(mouseGridPosition, ClearBusy);
             }
+
+            // Old version
+            //switch (_selectedAction)
+            //{
+            //    case MoveAction moveAction:
+            //        if (_selectedUnit.GetMoveAction().IsValidActionGridPosition(mouseGridPosition))
+            //        {
+            //            SetBusy();
+            //            moveAction.Move(mouseGridPosition, ClearBusy);
+            //        }
+            //        break;
+            //    case SpinAction spinAction:
+            //        SetBusy();
+            //        spinAction.Spin(ClearBusy);
+            //        break;
+            //}
         }
     }
 
@@ -97,6 +113,11 @@ public class UnitActionSystem : MonoBehaviour
             {
                 if (hit.transform.TryGetComponent<Unit>(out Unit unit))
                 {
+                    if (unit == _selectedUnit)
+                    {
+                        //unit already selected
+                        return false;
+                    }
                     SetSelectedUnit(unit);
                     return true;
                 }
@@ -126,6 +147,7 @@ public class UnitActionSystem : MonoBehaviour
     public void SetSelectedAction(BaseAction action)
     {
         _selectedAction = action;
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public Unit GetSelectedUnit()
@@ -133,7 +155,10 @@ public class UnitActionSystem : MonoBehaviour
         return _selectedUnit;
     }
 
-
+    public BaseAction GetSelectedAction()
+    {
+        return _selectedAction;
+    }
 
     #endregion
 }

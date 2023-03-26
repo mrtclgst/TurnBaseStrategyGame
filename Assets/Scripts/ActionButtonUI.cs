@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,6 +19,9 @@ public class ActionButtonUI : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _buttonText;
     [SerializeField] private Button _button;
+    [SerializeField] private GameObject _selectedBorder;
+
+    private BaseAction _buttonAction;
 
     #endregion
 
@@ -39,8 +43,20 @@ public class ActionButtonUI : MonoBehaviour
 
     public void SetButtonAction(BaseAction action)
     {
+        _buttonAction = action;
         _buttonText.text = action.GetActionName();
-        _button.onClick.AddListener(() => UnitActionSystem.Instance.SetSelectedAction(action));
+        _button.onClick.AddListener(() =>
+        {
+            UnitActionSystem.Instance.SetSelectedAction(action);
+            UpdateSelectedVisual();
+        }
+        );
+    }
+
+    public void UpdateSelectedVisual()
+    {
+        BaseAction _selectedAction = UnitActionSystem.Instance.GetSelectedAction();
+        _selectedBorder.SetActive(_buttonAction == _selectedAction);
     }
 
     #endregion

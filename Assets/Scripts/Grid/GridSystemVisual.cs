@@ -27,6 +27,12 @@ public class GridSystemVisual : MonoBehaviour
         int height = LevelGrid.Instance.GetHeight();
         _gridSystemVisualSingleArray = new GridSystemVisualSingle[width, height];
 
+        GameObject visualContainer = GameObject.Find("Grid Visuals");
+        if (!visualContainer)
+        {
+            visualContainer = new GameObject("Grid Visuals");
+        }
+
         for (int x = 0; x < width; x++)
         {
             for (int z = 0; z < height; z++)
@@ -34,7 +40,7 @@ public class GridSystemVisual : MonoBehaviour
                 GridPosition gridPosition = new GridPosition(x, z);
                 Transform gridSystemVisualSingleTransform = Instantiate(_gridVisualSinglePrefab,
                     LevelGrid.Instance.GetWorldPosition(gridPosition),
-                    Quaternion.identity);
+                    Quaternion.identity, visualContainer.transform);
                 _gridSystemVisualSingleArray[x, z] =
                     gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
             }
@@ -68,8 +74,8 @@ public class GridSystemVisual : MonoBehaviour
     void UpdateGridVisual()
     {
         HideAllGridPosition();
-        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
         ShowGridPositionList(
-            selectedUnit.GetMoveAction().GetValidActionGridPositionList());
+            selectedAction.GetValidActionGridPositionList());
     }
 }
