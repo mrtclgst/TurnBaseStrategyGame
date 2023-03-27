@@ -15,6 +15,7 @@ public class TurnSystemUI : MonoBehaviour
         _endTurnButton.onClick.AddListener(() => TurnSystem.Instance.NextTurn());
         UpdateTurnText();
         UpdateEnemyTurnVisual();
+        UpdateEndTurnVisibility();
     }
 
     #region Events
@@ -23,6 +24,7 @@ public class TurnSystemUI : MonoBehaviour
     {
         UpdateTurnText();
         UpdateEnemyTurnVisual();
+        UpdateEndTurnVisibility();
     }
 
     #endregion
@@ -37,6 +39,11 @@ public class TurnSystemUI : MonoBehaviour
     private void UpdateEnemyTurnVisual()
     {
         _enemyTurnVisualGO.SetActive(!TurnSystem.Instance.IsPlayerTurn());
+    }
+
+    private void UpdateEndTurnVisibility()
+    {
+        _endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
     }
 
     #endregion
