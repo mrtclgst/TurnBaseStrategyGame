@@ -12,6 +12,7 @@ public class Unit : MonoBehaviour
     private MoveAction _moveAction;
     private SpinAction _spinAction;
     private BaseAction[] _baseActionArray;
+    [SerializeField] private bool _isEnemy;
     private int _actionPoints = DEFAULT_ACTION_POINTS;
 
     #endregion
@@ -49,8 +50,12 @@ public class Unit : MonoBehaviour
 
     private void OnEventTurnChanged(object sender, EventArgs e)
     {
-        _actionPoints = DEFAULT_ACTION_POINTS;
-        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+        if (_isEnemy && !TurnSystem.Instance.IsPlayerTurn()
+            || !_isEnemy && TurnSystem.Instance.IsPlayerTurn())
+        {
+            _actionPoints = DEFAULT_ACTION_POINTS;
+            OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     #endregion
@@ -111,6 +116,11 @@ public class Unit : MonoBehaviour
     public int GetActionPoints()
     {
         return _actionPoints;
+    }
+
+    public bool IsEnemy()
+    {
+        return _isEnemy;
     }
 
     #endregion
