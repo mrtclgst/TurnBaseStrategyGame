@@ -8,6 +8,8 @@ public class UnitActionSystem : MonoBehaviour
 
     public event EventHandler OnSelectedUnitChanged;
     public event EventHandler OnSelectedActionChanged;
+    public event EventHandler<bool> OnBusyChanged;
+    public event EventHandler OnActionTriggered;
 
     public static UnitActionSystem Instance { get; private set; }
 
@@ -82,8 +84,12 @@ public class UnitActionSystem : MonoBehaviour
             //Refactored version
             if (_selectedAction.IsValidActionGridPosition(mouseGridPosition))
             {
-                SetBusy();
-                _selectedAction.TakeAction(mouseGridPosition, ClearBusy);
+                if (_selectedUnit.TrySpendActionPointsToTakeAction(_selectedAction))
+                {
+                    SetBusy();
+                    _selectedAction.TakeAction(mouseGridPosition, ClearBusy);
+                    OnActionTriggered?.Invoke(this, EventArgs.Empty);
+                }
             }
 
             // Old version
@@ -118,6 +124,7 @@ public class UnitActionSystem : MonoBehaviour
                         //unit already selected
                         return false;
                     }
+
                     SetSelectedUnit(unit);
                     return true;
                 }
@@ -130,11 +137,13 @@ public class UnitActionSystem : MonoBehaviour
     private void SetBusy()
     {
         _isBusy = true;
+        OnBusyChanged?.Invoke(this, _isBusy);
     }
 
     private void ClearBusy()
     {
         _isBusy = false;
+        OnBusyChanged?.Invoke(this, _isBusy);
     }
 
     private void SetSelectedUnit(Unit unit)

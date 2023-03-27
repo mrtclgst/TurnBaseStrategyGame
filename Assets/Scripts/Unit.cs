@@ -3,12 +3,16 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    public static event EventHandler OnAnyActionPointsChanged;
+
     #region Private Variables
 
+    private const int DEFAULT_ACTION_POINTS = 2;
     private GridPosition _gridPosition;
     private MoveAction _moveAction;
     private SpinAction _spinAction;
     private BaseAction[] _baseActionArray;
+    private int _actionPoints = DEFAULT_ACTION_POINTS;
 
     #endregion
 
@@ -25,7 +29,9 @@ public class Unit : MonoBehaviour
     {
         _gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitAtPosition(_gridPosition, this);
+        TurnSystem.Instance.OnTurnChanged += OnEventTurnChanged;
     }
+
 
     private void Update()
     {
@@ -40,6 +46,12 @@ public class Unit : MonoBehaviour
     #endregion
 
     #region Events
+
+    private void OnEventTurnChanged(object sender, EventArgs e)
+    {
+        _actionPoints = DEFAULT_ACTION_POINTS;
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     #endregion
 
@@ -63,6 +75,42 @@ public class Unit : MonoBehaviour
     public BaseAction[] GetBaseActionArray()
     {
         return _baseActionArray;
+    }
+
+    public bool TrySpendActionPointsToTakeAction(BaseAction action)
+    {
+        if (CanSpendActionPointsToTakeAction(action))
+        {
+            SpendActionPoints(action.GetActionPointsCost());
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public bool CanSpendActionPointsToTakeAction(BaseAction action)
+    {
+        if (_actionPoints >= action.GetActionPointsCost())
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void SpendActionPoints(int amount)
+    {
+        _actionPoints -= amount;
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public int GetActionPoints()
+    {
+        return _actionPoints;
     }
 
     #endregion

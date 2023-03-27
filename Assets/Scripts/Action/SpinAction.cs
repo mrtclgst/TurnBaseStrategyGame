@@ -40,4 +40,9 @@ public class SpinAction : BaseAction
         GridPosition unitGridPosition = _unit.GetGridPosition();
         return new List<GridPosition> { unitGridPosition };
     }
+
+    public override int GetActionPointsCost()
+    {
+        return 2;
+    }
 }
