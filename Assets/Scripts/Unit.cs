@@ -1,4 +1,5 @@
 using System;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -14,6 +15,7 @@ public class Unit : MonoBehaviour
     private BaseAction[] _baseActionArray;
     [SerializeField] private bool _isEnemy;
     private int _actionPoints = DEFAULT_ACTION_POINTS;
+    private HealthSystem _healthSystem;
 
     #endregion
 
@@ -24,6 +26,7 @@ public class Unit : MonoBehaviour
         _moveAction = GetComponent<MoveAction>();
         _spinAction = GetComponent<SpinAction>();
         _baseActionArray = GetComponents<BaseAction>();
+        _healthSystem = GetComponent<HealthSystem>();
     }
 
     private void Start()
@@ -31,8 +34,8 @@ public class Unit : MonoBehaviour
         _gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitAtPosition(_gridPosition, this);
         TurnSystem.Instance.OnTurnChanged += OnEventTurnChanged;
+        _healthSystem.OnEventDead += HealthSystem_OnEventDead;
     }
-
 
     private void Update()
     {
@@ -56,6 +59,12 @@ public class Unit : MonoBehaviour
             _actionPoints = DEFAULT_ACTION_POINTS;
             OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
         }
+    }
+
+    private void HealthSystem_OnEventDead(object sender, EventArgs e)
+    {
+        LevelGrid.Instance.RemoveUnitAtPosition(_gridPosition, this);
+        Destroy(gameObject);
     }
 
     #endregion
@@ -121,6 +130,17 @@ public class Unit : MonoBehaviour
     public bool IsEnemy()
     {
         return _isEnemy;
+    }
+
+    public Vector3 GetWorldPosition()
+    {
+        return transform.position;
+    }
+
+
+    public void TakeDamage(int damageAmount)
+    {
+        _healthSystem.TakeDamage(damageAmount);
     }
 
     #endregion

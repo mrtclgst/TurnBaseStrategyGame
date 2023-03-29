@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class BaseAction : MonoBehaviour
 {
+    public static event EventHandler OnEventAnyActionStarted;
+    public static event EventHandler OnEventAnyActionCompleted;
+
     protected Unit _unit;
     protected bool _isActive = false;
     protected Action _onActionComplete;
@@ -26,8 +29,27 @@ public abstract class BaseAction : MonoBehaviour
 
     public abstract List<GridPosition> GetValidActionGridPositionList();
 
+    protected void ActionStart(Action onActionComplete)
+    {
+        _isActive = true;
+        this._onActionComplete = onActionComplete;
+        OnEventAnyActionStarted?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected void ActionComplete()
+    {
+        _isActive = false;
+        _onActionComplete();
+        OnEventAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+    }
+
     public virtual int GetActionPointsCost()
     {
         return 1;
+    }
+
+    public Unit GetUnit()
+    {
+        return _unit;
     }
 }
