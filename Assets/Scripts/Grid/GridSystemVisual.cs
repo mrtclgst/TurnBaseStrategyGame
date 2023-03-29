@@ -6,8 +6,25 @@ public class GridSystemVisual : MonoBehaviour
 {
     public static GridSystemVisual Instance { get; private set; }
 
+
     [SerializeField] private Transform _gridVisualSinglePrefab;
+    [SerializeField] private List<GridVisualTypeMaterial> _gridVisualTypeMaterialList;
     private GridSystemVisualSingle[,] _gridSystemVisualSingleArray;
+
+    [Serializable]
+    public struct GridVisualTypeMaterial
+    {
+        public GridVisualType m_GridVisualType;
+        public Material m_Material;
+    }
+
+    public enum GridVisualType
+    {
+        White,
+        Blue,
+        Red,
+        Yellow
+    }
 
     private void Awake()
     {
@@ -45,12 +62,12 @@ public class GridSystemVisual : MonoBehaviour
                     gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
             }
         }
-    }
 
-    private void Update()
-    {
+        LevelGrid.Instance.OnEventAnyUnitMovedGridPosition += LevelGrid_OnAnyUnitMovedGridPosition;
+        UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UpdateGridVisual();
     }
+
 
     public void HideAllGridPosition()
     {
@@ -77,5 +94,28 @@ public class GridSystemVisual : MonoBehaviour
         BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
         ShowGridPositionList(
             selectedAction.GetValidActionGridPositionList());
+    }
+
+    private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
+    {
+        UpdateGridVisual();
+    }
+
+    private void LevelGrid_OnAnyUnitMovedGridPosition()
+    {
+        UpdateGridVisual();
+    }
+
+    private Material GetGridVisualTypeMaterial(GridVisualType type)
+    {
+        for (int index = 0; index < _gridVisualTypeMaterialList.Count; index++)
+        {
+            if (_gridVisualTypeMaterialList[index].m_GridVisualType == type)
+            {
+                return _gridVisualTypeMaterialList[index].m_Material;
+            }
+        }
+
+        return null;
     }
 }
