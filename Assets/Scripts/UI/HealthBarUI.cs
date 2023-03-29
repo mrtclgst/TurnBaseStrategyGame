@@ -10,14 +10,8 @@ public class HealthBarUI : MonoBehaviour
 
     private void Start()
     {
-        CameraManager.OnEventActionCamera += CameraManager_OnEventActionCamera;
         _healthSystem.OnEventDamaged += HealthSystem_OnEventDamaged;
         UpdateHealthBar();
-    }
-
-    private void CameraManager_OnEventActionCamera(object sender, CameraManager.OnActionCameraEventArgs e)
-    {
-        _canvas.enabled = e.m_Show;
     }
 
     private void UpdateHealthBar()

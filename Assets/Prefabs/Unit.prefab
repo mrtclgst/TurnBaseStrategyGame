@@ -320,6 +320,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _actionPointsText: {fileID: 4530482163706555141}
   _unit: {fileID: 4708987204200385633}
+  _canvas: {fileID: 0}
 --- !u!1 &4708987204200385639
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,6 +528,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _healthSystem: {fileID: 1406199856188240669}
   _healthBarFillImage: {fileID: 2992309557793619671}
+  _canvas: {fileID: 1903883944900933866}
 --- !u!1 &6992753611737063727
 GameObject:
   m_ObjectHideFlags: 0
