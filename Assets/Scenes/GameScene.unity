@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18017983, g: 0.22558844, b: 0.3068592, a: 1}
+  m_IndirectSpecularColor: {r: 0.18017967, g: 0.22558802, b: 0.3068583, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2946,8 +2946,10 @@ MonoBehaviour:
     m_Material: {fileID: 2100000, guid: 15c63031d24c3f54ea3404935e540002, type: 2}
   - m_GridVisualType: 2
     m_Material: {fileID: 2100000, guid: 233da91e19962f344aba7146ed56fc53, type: 2}
-  - m_GridVisualType: 3
+  - m_GridVisualType: 4
     m_Material: {fileID: 2100000, guid: af220eff49802f649b647072cc5d3e97, type: 2}
+  - m_GridVisualType: 3
+    m_Material: {fileID: 2100000, guid: 6cc96295cd6164d409f92db3a98e5041, type: 2}
 --- !u!4 &2107517222
 Transform:
   m_ObjectHideFlags: 0
