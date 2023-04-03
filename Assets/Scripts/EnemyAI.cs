@@ -41,8 +41,7 @@ public class EnemyAI : MonoBehaviour
                 if (_timer <= 0f)
                 {
                     _state = State.Busy;
-                    TakeEnemyAIAction(SetStateTakingTurn);
-                    TurnSystem.Instance.NextTurn();
+                    TakeEnemyAIAction(SetStateTakingTurn); 
                 }
 
                 break;
@@ -52,8 +51,6 @@ public class EnemyAI : MonoBehaviour
             default:
                 break;
         }
-
-
     }
 
     private void SetStateTakingTurn()
@@ -64,7 +61,26 @@ public class EnemyAI : MonoBehaviour
 
     private void TakeEnemyAIAction(Action OnEnemyAIActionComplete)
     {
+        Debug.Log("take enemy action");
+        foreach (Unit enemyUnit in UnitManager.Instance.GetEnemyUnitList())
+        {
+            TakeEnemyAIAction(enemyUnit, OnEnemyAIActionComplete);
+        }
+    }
 
+    private void TakeEnemyAIAction(Unit enemyUnit, Action onEnemyAIActionComplete)
+    {
+        SpinAction spinAction = enemyUnit.GetSpinAction();
+        GridPosition actionGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+
+        //Refactored version
+        if (spinAction.IsValidActionGridPosition(actionGridPosition))
+        {
+            if (enemyUnit.TrySpendActionPointsToTakeAction(spinAction))
+            {
+                spinAction.TakeAction(actionGridPosition, onEnemyAIActionComplete);
+            }
+        }
     }
 
     private void OnEventTurnChanged(object sender, EventArgs e)

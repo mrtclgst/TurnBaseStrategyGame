@@ -5,6 +5,9 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     public static event EventHandler OnAnyActionPointsChanged;
+    public static event EventHandler OnAnyUnitSpawned;
+    public static event EventHandler OnAnyUnitDead;
+
 
     #region Private Variables
 
@@ -35,6 +38,7 @@ public class Unit : MonoBehaviour
         LevelGrid.Instance.AddUnitAtPosition(_gridPosition, this);
         TurnSystem.Instance.OnTurnChanged += OnEventTurnChanged;
         _healthSystem.OnEventDead += HealthSystem_OnEventDead;
+        OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
     private void Update()
@@ -66,6 +70,7 @@ public class Unit : MonoBehaviour
     {
         LevelGrid.Instance.RemoveUnitAtPosition(_gridPosition, this);
         Destroy(gameObject);
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
     }
 
     #endregion
