@@ -22,7 +22,10 @@ public class UnitWorldUI : MonoBehaviour
 
     private void CameraManager_OnEventActionCamera(object sender, CameraManager.OnActionCameraEventArgs e)
     {
-        _canvas.enabled = e.m_Show;
+        if (_canvas != null)
+        {
+            _canvas.enabled = e.m_Show;
+        }
     }
 
     private void Unit_OnAnyActionPointsChanged(object sender, EventArgs e)

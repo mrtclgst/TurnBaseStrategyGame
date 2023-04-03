@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
 
     private State _state;
     private float _timer = 0;
+
     private void Awake()
     {
         _state = State.WaitingForEnemyTurn;
@@ -32,23 +33,24 @@ public class EnemyAI : MonoBehaviour
         switch (_state)
         {
             case State.WaitingForEnemyTurn:
-
                 break;
             case State.TakingTurn:
-
-                _state = State.Busy;
                 _timer -= Time.deltaTime;
                 if (_timer <= 0f)
                 {
-                    _state = State.Busy;
-                    TakeEnemyAIAction(SetStateTakingTurn); 
+                    if (TryTakeEnemyAIAction(SetStateTakingTurn))
+                    {
+                        _state = State.Busy;
+                    }
+                    else
+                    {
+                        //No more enemies have actions that they can take, end enemy turn
+                        TurnSystem.Instance.NextTurn();
+                    }
                 }
 
                 break;
             case State.Busy:
-
-                break;
-            default:
                 break;
         }
     }
@@ -59,19 +61,26 @@ public class EnemyAI : MonoBehaviour
         _state = State.TakingTurn;
     }
 
-    private void TakeEnemyAIAction(Action OnEnemyAIActionComplete)
+    private bool TryTakeEnemyAIAction(Action OnEnemyAIActionComplete)
     {
         Debug.Log("take enemy action");
         foreach (Unit enemyUnit in UnitManager.Instance.GetEnemyUnitList())
         {
-            TakeEnemyAIAction(enemyUnit, OnEnemyAIActionComplete);
+            if (TryTakeEnemyAIAction(enemyUnit, OnEnemyAIActionComplete))
+            {
+                Debug.Log("true");
+                return true;
+            }
         }
+
+        Debug.Log("false");
+        return false;
     }
 
-    private void TakeEnemyAIAction(Unit enemyUnit, Action onEnemyAIActionComplete)
+    private bool TryTakeEnemyAIAction(Unit enemyUnit, Action onEnemyAIActionComplete)
     {
         SpinAction spinAction = enemyUnit.GetSpinAction();
-        GridPosition actionGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPosition());
+        GridPosition actionGridPosition = enemyUnit.GetGridPosition();
 
         //Refactored version
         if (spinAction.IsValidActionGridPosition(actionGridPosition))
@@ -79,8 +88,13 @@ public class EnemyAI : MonoBehaviour
             if (enemyUnit.TrySpendActionPointsToTakeAction(spinAction))
             {
                 spinAction.TakeAction(actionGridPosition, onEnemyAIActionComplete);
+                Debug.Log("V2 true");
+                return true;
             }
         }
+
+        Debug.Log("V2 false");
+        return false;
     }
 
     private void OnEventTurnChanged(object sender, EventArgs e)
