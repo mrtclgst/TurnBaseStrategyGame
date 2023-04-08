@@ -45,7 +45,10 @@ public class UnitActionSystem : MonoBehaviour
     private void Start()
     {
         SetSelectedUnit(_selectedUnit);
+        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnEventTurnChanged;
     }
+
+
 
     private void Update()
     {
@@ -75,6 +78,23 @@ public class UnitActionSystem : MonoBehaviour
     #endregion
 
     #region Events
+    private void TurnSystem_OnEventTurnChanged(object sender, EventArgs e)
+    {
+        if (TurnSystem.Instance.IsPlayerTurn())
+        {
+            if (_selectedUnit == null)
+            {
+                if (UnitManager.Instance.GetFriendUnitList().Count > 0)
+                {
+                    SetSelectedUnit(UnitManager.Instance.GetFriendUnitList()[0]);
+                }
+                else
+                {
+                    SetSelectedUnit(null);
+                }
+            }
+        }
+    }
 
     #endregion
 

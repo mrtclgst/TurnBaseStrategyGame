@@ -1,5 +1,6 @@
 using System;
 using System.Security.Cryptography;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class Unit : MonoBehaviour
@@ -15,6 +16,7 @@ public class Unit : MonoBehaviour
     private GridPosition _gridPosition;
     private MoveAction _moveAction;
     private SpinAction _spinAction;
+    private ShootAction _shootAction;
     private BaseAction[] _baseActionArray;
     [SerializeField] private bool _isEnemy;
     private int _actionPoints = DEFAULT_ACTION_POINTS;
@@ -28,6 +30,7 @@ public class Unit : MonoBehaviour
     {
         _moveAction = GetComponent<MoveAction>();
         _spinAction = GetComponent<SpinAction>();
+        _shootAction = GetComponent<ShootAction>();
         _baseActionArray = GetComponents<BaseAction>();
         _healthSystem = GetComponent<HealthSystem>();
     }
@@ -87,6 +90,11 @@ public class Unit : MonoBehaviour
         return _spinAction;
     }
 
+    public ShootAction GetShootAction()
+    {
+        return _shootAction;
+    }
+
     public GridPosition GetGridPosition()
     {
         return _gridPosition;
@@ -143,10 +151,14 @@ public class Unit : MonoBehaviour
         return transform.position;
     }
 
-
     public void TakeDamage(int damageAmount)
     {
         _healthSystem.TakeDamage(damageAmount);
+    }
+
+    public float GetNormalizedHealth()
+    {
+        return _healthSystem.GetNormalizedHealth();
     }
 
     #endregion
