@@ -2,6 +2,7 @@ using System;
 using System.Security.Cryptography;
 using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Unit : MonoBehaviour
 {
@@ -14,9 +15,6 @@ public class Unit : MonoBehaviour
 
     private const int DEFAULT_ACTION_POINTS = 2;
     private GridPosition _gridPosition;
-    private MoveAction _moveAction;
-    private SpinAction _spinAction;
-    private ShootAction _shootAction;
     private BaseAction[] _baseActionArray;
     [SerializeField] private bool _isEnemy;
     private int _actionPoints = DEFAULT_ACTION_POINTS;
@@ -28,9 +26,6 @@ public class Unit : MonoBehaviour
 
     private void Awake()
     {
-        _moveAction = GetComponent<MoveAction>();
-        _spinAction = GetComponent<SpinAction>();
-        _shootAction = GetComponent<ShootAction>();
         _baseActionArray = GetComponents<BaseAction>();
         _healthSystem = GetComponent<HealthSystem>();
     }
@@ -80,19 +75,17 @@ public class Unit : MonoBehaviour
 
     #region Functions
 
-    public MoveAction GetMoveAction()
+    public T GetAction<T>() where T : BaseAction
     {
-        return _moveAction;
-    }
+        foreach (BaseAction baseAction in _baseActionArray)
+        {
+            if (baseAction is T)
+            {
+                return (T)baseAction;
+            }
+        }
 
-    public SpinAction GetSpinAction()
-    {
-        return _spinAction;
-    }
-
-    public ShootAction GetShootAction()
-    {
-        return _shootAction;
+        return null;
     }
 
     public GridPosition GetGridPosition()

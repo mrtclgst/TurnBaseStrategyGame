@@ -49,7 +49,6 @@ public class UnitActionSystem : MonoBehaviour
     }
 
 
-
     private void Update()
     {
         if (_isBusy)
@@ -78,6 +77,7 @@ public class UnitActionSystem : MonoBehaviour
     #endregion
 
     #region Events
+
     private void TurnSystem_OnEventTurnChanged(object sender, EventArgs e)
     {
         if (TurnSystem.Instance.IsPlayerTurn())
@@ -179,7 +179,7 @@ public class UnitActionSystem : MonoBehaviour
     private void SetSelectedUnit(Unit unit)
     {
         _selectedUnit = unit;
-        SetSelectedAction(unit.GetMoveAction());
+        SetSelectedAction(unit.GetAction<MoveAction>());
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
