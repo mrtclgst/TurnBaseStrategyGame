@@ -46,6 +46,46 @@ public struct GridPosition : IEquatable<GridPosition>
         return new GridPosition(a._x - b._x, a._z - b._z);
     }
 
+    public GridPosition North
+    {
+        get => this + new GridPosition(0, 1);
+    }
+
+    public GridPosition NorthEast
+    {
+        get => this + new GridPosition(1, 1);
+    }
+
+    public GridPosition NorthWest
+    {
+        get => this + new GridPosition(-1, 1);
+    }
+
+    public GridPosition South
+    {
+        get => this + new GridPosition(0, -1);
+    }
+
+    public GridPosition SouthEast
+    {
+        get => this + new GridPosition(1, -1);
+    }
+
+    public GridPosition SouthWest
+    {
+        get => this + new GridPosition(-1, -1);
+    }
+
+    public GridPosition West
+    {
+        get => this + new GridPosition(-1, 0);
+    }
+
+    public GridPosition East
+    {
+        get => this + new GridPosition(1, 0);
+    }
+
     public bool Equals(GridPosition other)
     {
         return this == other;

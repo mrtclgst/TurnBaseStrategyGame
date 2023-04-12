@@ -5,6 +5,7 @@ public class PathNode
     private int _hCost;
     private int _fCost;
     private PathNode _cameFromPathNode;
+    private bool _isWalkable = true;
 
     public PathNode(GridPosition gridPosition)
     {
@@ -49,5 +50,30 @@ public class PathNode
     public void ResetCameFromPathNode()
     {
         _cameFromPathNode = null;
+    }
+
+    public GridPosition GetGridPosition()
+    {
+        return _gridPosition;
+    }
+
+    public void SetCameFromPathNode(PathNode currentNode)
+    {
+        _cameFromPathNode = currentNode;
+    }
+
+    public PathNode GetCameFromPathNode()
+    {
+        return _cameFromPathNode;
+    }
+
+    public bool IsWalkable()
+    {
+        return _isWalkable;
+    }
+
+    public void SetIsWalkable(bool isWalkable)
+    {
+        _isWalkable = isWalkable;
     }
 }
