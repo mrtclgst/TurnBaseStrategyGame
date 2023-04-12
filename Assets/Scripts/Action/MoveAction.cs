@@ -11,13 +11,8 @@ public class MoveAction : BaseAction
     [SerializeField] private float _moveSpeed = 4f;
     [SerializeField] private float _rotateSpeed = 10f;
     [SerializeField] private int _maxMovementDistance = 4;
-    private Vector3 _targetPosition;
-
-    protected override void Awake()
-    {
-        base.Awake();
-        _targetPosition = transform.position;
-    }
+    private List<Vector3> _targetPositionList;
+    private int _currentPositionIndex = 0;
 
     private void Update()
     {
@@ -26,11 +21,13 @@ public class MoveAction : BaseAction
             return;
         }
 
+        Vector3 targetPosition = _targetPositionList[_currentPositionIndex];
+
         float stoppingDistance = 0.1f;
-        if (Vector3.Distance(transform.position, _targetPosition) > stoppingDistance)
+        if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
         {
-            Vector3 moveDirection = (_targetPosition - transform.position).normalized;
-            var lookPos = this._targetPosition - transform.position;
+            Vector3 moveDirection = (targetPosition - transform.position).normalized;
+            var lookPos = targetPosition - transform.position;
             lookPos.y = 0;
             var rotation = Quaternion.LookRotation(lookPos);
             transform.position += _moveSpeed * Time.deltaTime * moveDirection;
@@ -39,8 +36,12 @@ public class MoveAction : BaseAction
         }
         else
         {
-            OnEventStopMoving?.Invoke(this, EventArgs.Empty);
-            ActionComplete();
+            _currentPositionIndex++;
+            if (_currentPositionIndex >= _targetPositionList.Count)
+            {
+                OnEventStopMoving?.Invoke(this, EventArgs.Empty);
+                ActionComplete();
+            }
         }
     }
 
@@ -73,6 +74,16 @@ public class MoveAction : BaseAction
                     continue;
                 }
 
+                if (!Pathfinding.Instance.IsWalkableGridPosition(testGridPosition))
+                {
+                    continue;
+                }
+
+                if (!Pathfinding.Instance.HasPath(_unit.GetGridPosition(), testGridPosition))
+                {
+                    continue;
+                }
+
                 validGridPositionList.Add(testGridPosition);
             }
         }
@@ -82,7 +93,16 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        this._targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+        List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindPath(_unit.GetGridPosition(), gridPosition);
+
+        _currentPositionIndex = 0;
+        _targetPositionList = new List<Vector3>();
+
+        for (int index = 0; index < pathGridPositionList.Count; index++)
+        {
+            _targetPositionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPositionList[index]));
+        }
+
         OnEventStartMoving?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
     }

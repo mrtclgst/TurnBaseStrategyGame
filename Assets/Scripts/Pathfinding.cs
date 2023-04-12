@@ -71,6 +71,7 @@ public class Pathfinding : MonoBehaviour
                 pathNode.SetGCost(int.MaxValue);
                 pathNode.SetHCost(0);
                 pathNode.CalculateFCost();
+                pathNode.ResetCameFromPathNode();
             }
         }
 
@@ -238,5 +239,15 @@ public class Pathfinding : MonoBehaviour
     private PathNode GetNode(GridPosition gridPosition)
     {
         return _gridSystem.GetGridObject(gridPosition);
+    }
+
+    public bool IsWalkableGridPosition(GridPosition gridPosition)
+    {
+        return _gridSystem.GetGridObject(gridPosition).IsWalkable();
+    }
+
+    public bool HasPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        return FindPath(startGridPosition, endGridPosition) != null;
     }
 }
