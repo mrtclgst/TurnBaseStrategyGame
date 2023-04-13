@@ -78,8 +78,16 @@ public class MoveAction : BaseAction
                 {
                     continue;
                 }
-
+   
                 if (!Pathfinding.Instance.HasPath(_unit.GetGridPosition(), testGridPosition))
+                {
+                    continue;
+                }
+
+                //floattan kurtulmak icin boyle yapmistik o yuzden bu kismi da 10 ile carpiyoruz.
+                int pathfindingDistanceMultiplier = 10;
+                if (Pathfinding.Instance.GetPathLength(_unit.GetGridPosition(), testGridPosition) >
+                    _maxMovementDistance * pathfindingDistanceMultiplier)
                 {
                     continue;
                 }
@@ -93,7 +101,8 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        List<GridPosition> pathGridPositionList = Pathfinding.Instance.FindPath(_unit.GetGridPosition(), gridPosition);
+        List<GridPosition> pathGridPositionList =
+            Pathfinding.Instance.FindPath(_unit.GetGridPosition(), gridPosition, out int pathLength);
 
         _currentPositionIndex = 0;
         _targetPositionList = new List<Vector3>();

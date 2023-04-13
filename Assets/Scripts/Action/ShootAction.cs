@@ -11,6 +11,7 @@ public class ShootAction : BaseAction
         Cooloff
     }
 
+    public static event EventHandler<OnShootEventArgs> OnEventAnyShoot;
     public event EventHandler<OnShootEventArgs> OnEventShoot;
 
     public class OnShootEventArgs : EventArgs
@@ -25,6 +26,7 @@ public class ShootAction : BaseAction
     private Unit _targetUnit;
     private bool _canShootBullet;
     [SerializeField] private float _rotateSpeed = 1f;
+    [SerializeField] private LayerMask _whatIsObstacle;
 
     private void Update()
     {
@@ -63,6 +65,12 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
+        OnEventAnyShoot?.Invoke(this, new OnShootEventArgs()
+        {
+            ShootingUnit = this._unit,
+            targetUnit = _targetUnit
+        });
+
         OnEventShoot?.Invoke(this, new OnShootEventArgs()
         {
             ShootingUnit = this._unit,
@@ -163,6 +171,16 @@ public class ShootAction : BaseAction
                 if (targetUnit.IsEnemy() == _unit.IsEnemy())
                 {
                     //Both units are on the same team so skipped.
+                    continue;
+                }
+
+                Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(unitGridPosition);
+                Vector3 shootDir = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
+                float shoulderHeight = 1.7f;
+
+                if (Physics.Raycast(unitWorldPosition + Vector3.up * shoulderHeight, shootDir,
+                        Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition()), _whatIsObstacle))
+                {
                     continue;
                 }
 
