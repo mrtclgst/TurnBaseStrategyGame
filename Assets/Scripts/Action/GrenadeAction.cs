@@ -46,6 +46,7 @@ public class GrenadeAction : BaseAction
                     continue;
                 }
 
+
                 //for distance calculation
                 int testDistance = Math.Abs(x) + Mathf.Abs(z);
                 if (testDistance > _maxThrowDistance)

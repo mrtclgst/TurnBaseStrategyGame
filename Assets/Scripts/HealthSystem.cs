@@ -18,7 +18,7 @@ public class HealthSystem : MonoBehaviour
     {
         _health -= damageAmount;
         OnEventDamaged?.Invoke(this, EventArgs.Empty);
-        if (_health < 0)
+        if (_health <= 0)
         {
             _health = 0;
             Die();

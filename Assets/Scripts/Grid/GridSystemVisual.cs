@@ -83,7 +83,8 @@ public class GridSystemVisual : MonoBehaviour
     {
         foreach (GridPosition gridPosition in gridPositionList)
         {
-            _gridSystemVisualSingleArray[gridPosition._x, gridPosition._z].Show(GetGridVisualTypeMaterial(gridVisualType));
+            _gridSystemVisualSingleArray[gridPosition._x, gridPosition._z]
+                .Show(GetGridVisualTypeMaterial(gridVisualType));
         }
     }
 
@@ -106,7 +107,16 @@ public class GridSystemVisual : MonoBehaviour
                 break;
             case ShootAction shootAction:
                 gridVisualType = GridVisualType.Red;
-                ShowGridPositionRange(selectedUnit.GetGridPosition(), shootAction.GetMaxShootDistance(), GridVisualType.RedSoft);
+                ShowGridPositionRange(selectedUnit.GetGridPosition(), shootAction.GetMaxShootDistance(),
+                    GridVisualType.RedSoft);
+                break;
+            case GrenadeAction grenadeAction:
+                gridVisualType = GridVisualType.Yellow;
+                break;
+            case SwordAction swordAction:
+                gridVisualType = GridVisualType.Red;
+                ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), swordAction.GetMaxSwordDistance(),
+                    GridVisualType.RedSoft);
                 break;
         }
 
@@ -118,9 +128,9 @@ public class GridSystemVisual : MonoBehaviour
     {
         List<GridPosition> gridPositionList = new List<GridPosition>();
 
-        for (int x = 0; x <= range; x++)
+        for (int x = -range; x <= range; x++)
         {
-            for (int z = 0; z <= range; z++)
+            for (int z = -range; z <= range; z++)
             {
                 GridPosition testGridPosition = gridPosition + new GridPosition(x, z);
 
@@ -131,6 +141,28 @@ public class GridSystemVisual : MonoBehaviour
 
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
                 if (testDistance > range)
+                {
+                    continue;
+                }
+
+                gridPositionList.Add(testGridPosition);
+            }
+        }
+
+        ShowGridPositionList(gridPositionList, gridVisualType);
+    }
+
+    private void ShowGridPositionRangeSquare(GridPosition gridPosition, int range, GridVisualType gridVisualType)
+    {
+        List<GridPosition> gridPositionList = new List<GridPosition>();
+
+        for (int x = -range; x <= range; x++)
+        {
+            for (int z = -range; z <= range; z++)
+            {
+                GridPosition testGridPosition = gridPosition + new GridPosition(x, z);
+
+                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition))
                 {
                     continue;
                 }
