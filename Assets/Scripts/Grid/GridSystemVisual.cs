@@ -9,6 +9,7 @@ public class GridSystemVisual : MonoBehaviour
     [SerializeField] private Transform _gridVisualSinglePrefab;
     [SerializeField] private List<GridVisualTypeMaterial> _gridVisualTypeMaterialList;
     private GridSystemVisualSingle[,] _gridSystemVisualSingleArray;
+    private GridSystemVisualSingle _lastSelectedVisualSingle;
 
     [Serializable]
     public struct GridVisualTypeMaterial
@@ -66,6 +67,34 @@ public class GridSystemVisual : MonoBehaviour
         LevelGrid.Instance.OnEventAnyUnitMovedGridPosition += LevelGrid_OnAnyUnitMovedGridPosition;
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UpdateGridVisual();
+
+        for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
+        {
+            for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+            {
+                _gridSystemVisualSingleArray[x, z].Show(GetGridVisualTypeMaterial(GridVisualType.White));
+            }
+        }
+    }
+
+    private void Update()
+    {
+        if (_lastSelectedVisualSingle != null)
+        {
+            _lastSelectedVisualSingle.HideSelected();
+        }
+
+        Vector3 mouseWorldPosition = MouseWorld.GetPosition();
+        GridPosition gridPosition = LevelGrid.Instance.GetGridPosition(mouseWorldPosition);
+        if (LevelGrid.Instance.IsValidGridPosition(gridPosition))
+        {
+            _lastSelectedVisualSingle = _gridSystemVisualSingleArray[gridPosition._x, gridPosition._z];
+        }
+
+        if (_lastSelectedVisualSingle != null)
+        {
+            _lastSelectedVisualSingle.ShowSelected();
+        }
     }
 
     public void HideAllGridPosition()

@@ -6,7 +6,7 @@ public class LevelGrid : MonoBehaviour
 {
     public event Action OnEventAnyUnitMovedGridPosition;
     [SerializeField] private Transform _gridDebugObject;
-    private GridSystem<GridObject> _gridSystem;
+    private GridSystemHex<GridObject> _gridSystemHex;
     [SerializeField] private int _width = 10;
     [SerializeField] private int _height = 10;
     [SerializeField] private float _cellSize = 2f;
@@ -22,8 +22,8 @@ public class LevelGrid : MonoBehaviour
         }
 
         Instance = this;
-        _gridSystem = new GridSystem<GridObject>(_width, _height, _cellSize,
-            (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
+        _gridSystemHex = new GridSystemHex<GridObject>(_width, _height, _cellSize,
+            (GridSystemHex<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
         //_gridSystem.CreateDebugObjects(_gridDebugObject);
     }
 
@@ -34,19 +34,19 @@ public class LevelGrid : MonoBehaviour
 
     public void AddUnitAtPosition(GridPosition gridPosition, Unit unit)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         gridObject.AddUnit(unit);
     }
 
     public List<Unit> GetUnitListAtPosition(GridPosition gridPosition)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         return gridObject.GetUnitList();
     }
 
     public void RemoveUnitAtPosition(GridPosition gridPosition, Unit unit)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         gridObject.RemoveUnit(unit);
     }
 
@@ -59,39 +59,39 @@ public class LevelGrid : MonoBehaviour
 
     public GridPosition GetGridPosition(Vector3 worldPosition)
     {
-        return _gridSystem.GetGridPosition(worldPosition);
+        return _gridSystemHex.GetGridPosition(worldPosition);
     }
 
     public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
-        return _gridSystem.GetWorldPosition(gridPosition);
+        return _gridSystemHex.GetWorldPosition(gridPosition);
     }
 
-    public bool IsValidGridPosition(GridPosition gridPosition) => _gridSystem.IsValidGridPosition(gridPosition);
-    public int GetWidth() => _gridSystem.GetWidth();
-    public int GetHeight() => _gridSystem.GetHeight();
+    public bool IsValidGridPosition(GridPosition gridPosition) => _gridSystemHex.IsValidGridPosition(gridPosition);
+    public int GetWidth() => _gridSystemHex.GetWidth();
+    public int GetHeight() => _gridSystemHex.GetHeight();
 
     public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         return gridObject.HasAnyUnit();
     }
 
     public Unit GetUnitAtGridPosition(GridPosition gridPosition)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         return gridObject.GetUnit();
     }
 
     public IInteractable GetInteractableAtGridPosition(GridPosition gridPosition)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         return gridObject.GetInteractable();
     }
 
     public void SetInteractableAtGridPosition(GridPosition gridPosition, IInteractable interactable)
     {
-        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        GridObject gridObject = _gridSystemHex.GetGridObject(gridPosition);
         gridObject.SetInteractable(interactable);
     }
 }
