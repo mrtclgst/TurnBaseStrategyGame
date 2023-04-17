@@ -38,4 +38,4 @@ public class DestructibleCrate : MonoBehaviour
             ApplyExplosionToChildren(child, explosionForce, explosionPosition, explosionRange);
         }
     }
-}
+} 

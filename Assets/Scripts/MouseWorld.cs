@@ -4,7 +4,6 @@ public class MouseWorld : MonoBehaviour
 {
     #region Public Variables
 
-
     #endregion
 
     #region Static Variables
@@ -16,7 +15,6 @@ public class MouseWorld : MonoBehaviour
     #region Private Variables
 
     [SerializeField] private LayerMask _mousePlaneLayerMask;
-
 
     #endregion
 
@@ -41,7 +39,7 @@ public class MouseWorld : MonoBehaviour
 
     public static Vector3 GetPosition()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
         Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, instance._mousePlaneLayerMask);
         return hit.point;
     }

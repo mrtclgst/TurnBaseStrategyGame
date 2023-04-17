@@ -340,6 +340,7 @@ GameObject:
   - component: {fileID: 1579778918828928761}
   - component: {fileID: 8883663584824470564}
   - component: {fileID: 3942408179003781166}
+  - component: {fileID: 2459554720052631180}
   m_Layer: 7
   m_Name: Unit
   m_TagString: Untagged
@@ -405,7 +406,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _moveSpeed: 4
   _rotateSpeed: 10
-  _maxMovementDistance: 2
+  _maxMovementDistance: 5
 --- !u!114 &102678493657399087
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,6 +513,19 @@ MonoBehaviour:
   _maxSwordDistance: 1
   _afterHitStateTime: 0.5
   _beforeHitStateTime: 0.7
+--- !u!114 &2459554720052631180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4708987204200385639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72fb7d05d54c97d4b9be1e62d4518108, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interactionRange: 5
 --- !u!1 &5068541391716153116
 GameObject:
   m_ObjectHideFlags: 0
