@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGrid : MonoBehaviour
 {
+    public event Action OnEventAnyUnitMovedGridPosition;
     [SerializeField] private Transform _gridDebugObject;
-    private GridSystem _gridSystem;
+    private GridSystem<GridObject> _gridSystem;
+    [SerializeField] private int _width = 10;
+    [SerializeField] private int _height = 10;
+    [SerializeField] private float _cellSize = 2f;
     public static LevelGrid Instance { get; private set; }
 
     private void Awake()
@@ -17,8 +22,14 @@ public class LevelGrid : MonoBehaviour
         }
 
         Instance = this;
-        _gridSystem = new GridSystem(10, 10, 2f);
-        _gridSystem.CreateDebugObjects(_gridDebugObject);
+        _gridSystem = new GridSystem<GridObject>(_width, _height, _cellSize,
+            (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
+        //_gridSystem.CreateDebugObjects(_gridDebugObject);
+    }
+
+    private void Start()
+    {
+        Pathfinding.Instance.Setup(_width, _height, _cellSize);
     }
 
     public void AddUnitAtPosition(GridPosition gridPosition, Unit unit)
@@ -43,6 +54,7 @@ public class LevelGrid : MonoBehaviour
     {
         RemoveUnitAtPosition(fromGridPosition, unit);
         AddUnitAtPosition(toGridPosition, unit);
+        OnEventAnyUnitMovedGridPosition?.Invoke();
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition)
@@ -63,5 +75,23 @@ public class LevelGrid : MonoBehaviour
     {
         GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
         return gridObject.HasAnyUnit();
+    }
+
+    public Unit GetUnitAtGridPosition(GridPosition gridPosition)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetUnit();
+    }
+
+    public IInteractable GetInteractableAtGridPosition(GridPosition gridPosition)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetInteractable();
+    }
+
+    public void SetInteractableAtGridPosition(GridPosition gridPosition, IInteractable interactable)
+    {
+        GridObject gridObject = _gridSystem.GetGridObject(gridPosition);
+        gridObject.SetInteractable(interactable);
     }
 }

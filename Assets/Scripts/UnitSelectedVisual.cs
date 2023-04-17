@@ -5,7 +5,6 @@ using UnityEngine;
 ///INFO
 ///->Usage of UnitSelectedVisual script: 
 ///ENDINFO
-
 public class UnitSelectedVisual : MonoBehaviour
 {
     #region Public Variables
@@ -13,6 +12,7 @@ public class UnitSelectedVisual : MonoBehaviour
     #endregion
 
     #region Private Variables
+
     [SerializeField] private Unit _unit;
 
     private MeshRenderer _meshRenderer;
@@ -38,7 +38,7 @@ public class UnitSelectedVisual : MonoBehaviour
 
     private void OnDestroy()
     {
-        UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
+        UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
     }
 
     #endregion

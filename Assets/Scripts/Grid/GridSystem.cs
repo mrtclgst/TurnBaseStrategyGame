@@ -1,19 +1,20 @@
-using Unity.Mathematics;
+using System;
 using UnityEngine;
 
-public class GridSystem
+public class GridSystem<TGridObject>
 {
     private int _width;
     private int _height;
     private float _cellSize;
-    private GridObject[,] _gridObjectArray;
+    private TGridObject[,] _gridObjectArray;
 
-    public GridSystem(int width, int height, float cellSize)
+    public GridSystem(int width, int height, float cellSize,
+        Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
     {
         _width = width;
         _height = height;
         _cellSize = cellSize;
-        _gridObjectArray = new GridObject[width, height];
+        _gridObjectArray = new TGridObject[width, height];
 
         for (int x = 0; x < width; x++)
         {
@@ -22,7 +23,7 @@ public class GridSystem
                 // Debug.DrawLine(GetWorldPosition(x, z), GetWorldPosition(x, z) + Vector3.right * .2f, Color.white, 1000);
 
                 GridPosition gridPosition = new GridPosition(x, z);
-                _gridObjectArray[x, z] = new GridObject(this, gridPosition);
+                _gridObjectArray[x, z] = createGridObject(this, gridPosition);
             }
         }
     }
@@ -49,7 +50,6 @@ public class GridSystem
             debugObjectsParent = new GameObject("DebugObjectsParent");
         }
 
-
         for (int x = 0; x < _height; x++)
         {
             for (int z = 0; z < _width; z++)
@@ -65,7 +65,7 @@ public class GridSystem
         }
     }
 
-    public GridObject GetGridObject(GridPosition gridPosition)
+    public TGridObject GetGridObject(GridPosition gridPosition)
     {
         return _gridObjectArray[gridPosition._x, gridPosition._z];
     }
